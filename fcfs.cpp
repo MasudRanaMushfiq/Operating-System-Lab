@@ -3,7 +3,6 @@ using namespace std;
 
 int main(){
 
-
     int n;
     cout << "Enter Process Number: ";
     cin>>n;
@@ -37,5 +36,5 @@ int main(){
     cout<< "\nAvarage Waiting Time: " << totall_waiting_time / n <<endl;
     cout<< "\nAvarage Turnaround Time: " << totall_turn_around_time / n <<endl;
 
-
 }
+
