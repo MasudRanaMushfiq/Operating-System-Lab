@@ -41,6 +41,13 @@ int main() {
         turnaroundTime[i] = waitingTime[i] + burstTime[i];
     }
 
+
+    cout << "\nGantt Chart:\n|";
+    for (int i = 0; i < numberOfProcesses; i++) {
+        cout << " P" << processId[i] << " |";
+    }
+
+
     // Output results
     double totalWaitingTime = 0, totalTurnaroundTime = 0;
 
