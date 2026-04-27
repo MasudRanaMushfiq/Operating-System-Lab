@@ -1,100 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 int main(){
 
-    int process, resources;
-    cout<<"Enter Process Number: ";
-    cin>>process;
-    cout<<"\nEnter Resources Number: ";
-    cin>>resources;
 
-    int allocation[10][10], maximum[10][10], need[10][10], available[10];
+    int number_of_Page = 0, number_Of_Frame = 0;
+    cin>>number_of_Page;
 
-    cout<<"\nEnter Allocation Matrix: \n";
-    for(int i=0; i<process; i++){
-        for(int j=0; j<resources; j++){
-            cin>>allocation[i][j];
-        }
+    vector<int> frame_reference(number_of_Page);
+    for(int i=0; i<number_of_Page; i++){
+        cin>>frame_reference[i];
     }
 
-    cout<<"\nEnter Maximum Matrix: \n";
-    for(int i=0; i<process; i++){
-        for(int j=0; j<resources; j++){
-            cin>>maximum[i][j];
-        }
-    }
+    cin>>number_Of_Frame;
 
-    cout<<"\nEnter Available Resources: \n";
-    for(int i=0; i<resources; i++){
-        cin>>available[i];
-    }
+    vector<int> frame(number_Of_Frame, -1);
 
-    // for(int i=0; i<process; i++){
-    //     for(int j=0; j<resources; j++){
-    //         need[i][j] = maximum[i][j] - allocation[i][j];
-    //     }
-    // }
-
-    int work[10];
-    for(int i=0; i<resources; i++){
-        work[i] = available[i];
-    }
+    int pageHit = 0, pageFault = 0, pointer = 0;
 
 
-        bool finished[10] = {false};
-    int safeSequence[10];
-    int count = 0;
+    for(int i=0; i<number_of_Page; i++){
+        bool found = false;
 
-        while(count < process){
-            bool found = false;
+        int current_page = frame_reference[i];
 
-            for(int i = 0; i < process; i++){
-                if(!finished[i]){
-                    bool canExexcute = true;
-
-                    for(int j=0; j<resources; j++){
-                        if(maximum[i][j] > work[j]){
-                            canExexcute = false;
-                            break;
-                        }
-                    }
-
-                    if(canExexcute){
-                        for(int j=0; j<resources; j++){
-                            work[j] += allocation[i][j];
-                        }
-
-                        safeSequence[count++] = i;
-                        finished[i] = true;
-                        found = true;
-                    }
-                }
-            }
-
-
-            if(!found){
-                break;
+        for(int j=0; j<number_Of_Frame; j++){
+            if(frame[j] == current_page){
+            found = true;
+            pageHit++;
+            break;
             }
         }
 
-        bool deadlock = false;
-        for(int i = 0; i < process; i++){
-            if(!finished[i]){
-                cout<<"p"<<i<< " ";
-                deadlock = true;
-            }
+        if(!found){
+            frame[pointer] = current_page;
+            pageFault++;
+            pointer = (pointer + 1) % number_Of_Frame;
         }
-        cout<<endl;
 
-        if(deadlock){
-            cout<<"\nDeadlock Occure\n";
-        }else{
-            cout<<"\nNo Deadlock Ocuure\n";
-        }
+    }
+
+    cout<<"\nPage Hit: "<<pageHit;
+    cout<<"\nPage Fault: "<<pageFault<<endl;
+
 
 }
-
-
-

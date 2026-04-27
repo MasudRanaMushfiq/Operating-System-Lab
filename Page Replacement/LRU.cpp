@@ -37,11 +37,10 @@ int main() {
             }
         }
 
-        if (found != -1) {
+        if(found != -1) {
             // HIT → update last used time
             lastUsed[found] = i;
-        }
-        else {
+        }else{
             // PAGE FAULT
             pageFaults++;
 
@@ -87,7 +86,7 @@ Enter page reference string:
 1 2 3 4 1 2 5
 Enter number of frames: 3
 
-Totall Page Fault: 6
+Totall Page Fault: 7
 
 */
 
