@@ -10,7 +10,7 @@ int main() {
     cout << "Enter number of resources: ";
     cin >> resources;
 
-    int allocation[10][10], request[10][10];
+    int allocation[10][10], maximum[10][10], need[10][10];
     int available[10];
 
     // Input Allocation Matrix
@@ -21,11 +21,11 @@ int main() {
         }
     }
 
-    // Input Request Matrix
-    cout << "\nEnter Request Matrix:\n";
+    // Input Maximum Matrix
+    cout << "\nEnter Maximum Matrix:\n";
     for (int i = 0; i < processes; i++) {
         for (int j = 0; j < resources; j++) {
-            cin >> request[i][j];
+            cin >> maximum[i][j];
         }
     }
 
@@ -35,63 +35,65 @@ int main() {
         cin >> available[i];
     }
 
-    bool finished[10] = {false};
-    int work[10];
+    // Calculate Need Matrix
+    for (int i = 0; i < processes; i++) {
+        for (int j = 0; j < resources; j++) {
+            need[i][j] = maximum[i][j] - allocation[i][j];
+        }
+    }
 
+    bool finished[10] = {false};
+    int safeSequence[10];
+    int count = 0;
+
+    int work[10];
     for (int i = 0; i < resources; i++) {
         work[i] = available[i];
     }
 
-    int completed = 0;
-
-    while (completed < processes) {
+    // Safety Algorithm
+    while (count < processes) {
         bool found = false;
 
         for (int i = 0; i < processes; i++) {
 
             if (!finished[i]) {
-                bool canProceed = true;
+                bool canExecute = true;
 
                 for (int j = 0; j < resources; j++) {
-                    if (request[i][j] > work[j]) {
-                        canProceed = false;
+                    if (need[i][j] > work[j]) {
+                        canExecute = false;
                         break;
                     }
                 }
 
-                if (canProceed) {
+                if (canExecute) {
                     for (int j = 0; j < resources; j++) {
                         work[j] += allocation[i][j];
                     }
 
+                    safeSequence[count++] = i;
                     finished[i] = true;
                     found = true;
-                    completed++;
                 }
             }
         }
 
         if (!found) {
-            break; // no progress → possible deadlock
+            cout << "\nSystem is NOT in a Safe State.\n";
+            return 0;
         }
     }
 
-    // Check deadlock
-    bool deadlock = false;
-
-    cout << "\nUnfinished Processes: ";
+    // Safe state output
+    cout << "\nSystem is in a SAFE state.\nSafe Sequence: ";
 
     for (int i = 0; i < processes; i++) {
-        if (!finished[i]) {
-            cout << "P" << i << " ";
-            deadlock = true;
-        }
+        cout << "P" << safeSequence[i];
+        if (i != processes - 1) cout << " -> ";
     }
 
-    if (deadlock)
-        cout << "\n\nSystem is in DEADLOCK state.\n";
-    else
-        cout << "\n\nNo Deadlock detected. System is SAFE.\n";
+    cout << endl;
 
     return 0;
 }
@@ -99,31 +101,35 @@ int main() {
 
 /*
 
-Example 1 — SAFE State (NO Deadlock)
-Available
-A = (3, 3, 2)
-Allocation
+Number of processes = 5
+Number of resources = 3 (A, B, C)
+
+Allocation Matrix
 Process	A	B	C
 P0	0	1	0
 P1	2	0	0
 P2	3	0	2
-Request Matrix
+P3	2	1	1
+P4	0	0	2
 
-| Process | A | B | C |
-|--------|---|---|
-| P0 | 0 | 0 | 0 |
-| P1 | 1 | 0 | 0 |
-| P2 | 0 | 0 | 0 |
+Maximum Matrix
+Process	A	B	C
+P0	7	5	3
+P1	3	2	2
+P2	9	0	2
+P3	2	2	2
+P4	4	3	3
 
-Step reasoning
+Available Resources
+A = 3, B = 3, C = 2
 
-Work = (3,3,2)
-
-P0 request = (0,0,0) ✔ finishes → Work increases
-P1 request = (1,0,0) ✔ finishes
-P2 request = (0,0,0) ✔ finishes
-Result
-Safe Sequence: P0 → P1 → P2
-System is SAFE (NO deadlock)
+Need Matrix (Maximum - Allocation)
+Process	A	B	C
+P0	7	4	3
+P1	1	2	2
+P2	6	0	0
+P3	0	1	1
+P4	4	3	1
 
 */
+
