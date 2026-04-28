@@ -1,3 +1,6 @@
+// The code only run on LINUX OS 
+
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
